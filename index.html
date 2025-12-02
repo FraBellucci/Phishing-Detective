@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Detective - Modulo 4</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .stat-box {
+            background: #f0f4ff;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .reset-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        .game-area {
+            margin-top: 20px;
+        }
+
+        .situation-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .situation-card.answered {
+            opacity: 0.7;
+        }
+
+        .situation-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .situation-icon {
+            font-size: 2.5em;
+        }
+
+        .situation-number {
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .situation-content {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .email-from {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .email-subject {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        .email-body {
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .email-detail {
+            font-family: 'Courier New', monospace;
+            background: #e8e8e8;
+            padding: 8px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .choices {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .choice-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 20px;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .choice-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .choice-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-safe {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-safe.correct {
+            border-color: #059669;
+            animation: pulse 0.5s;
+        }
+
+        .btn-danger.correct {
+            border-color: #dc2626;
+            animation: pulse 0.5s;
+        }
+
+        .btn-safe.wrong, .btn-danger.wrong {
+            background: #6b7280;
+            border-color: #374151;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        .feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .feedback.wrong {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .victory {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .victory.show {
+            display: block;
+            animation: slideDown 0.5s;
+        }
+
+        .victory h2 {
+            color: #10b981;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .victory-emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .score-details {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.6em;
+            }
+
+            .choices {
+                flex-direction: column;
+            }
+
+            .choice-btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕵️ Phishing Detective</h1>
+            <p class="subtitle">Riconosci le minacce informatiche e proteggi l'azienda!</p>
+
+            <div class="stats">
+                <div class="stat-box">Situazioni analizzate: <span id="answered">0</span>/6</div>
+                <div class="stat-box">Risposte corrette: <span id="correct">0</span>/6</div>
+                <button class="reset-btn" onclick="resetGame()">🔄 Ricomincia</button>
+                <button class="reset-btn" onclick="window.close()" style="background: #6b7280;">← Torna al corso</button>
+            </div>
+        </div>
+
+        <div class="game-area" id="gameArea"></div>
+
+        <div id="victory" class="victory">
+            <div class="victory-emoji">🎉</div>
+            <h2>Missione completata!</h2>
+            <div class="score-details">
+                <p style="font-size: 1.3em; margin-bottom: 10px;">
+                    Hai risposto correttamente a <strong id="finalScore">0</strong> situazioni su 6
+                </p>
+                <p id="scoreMessage" style="color: #666; font-size: 1.1em;"></p>
+            </div>
+            <button class="reset-btn" onclick="resetGame()">Gioca ancora</button>
+        </div>
+    </div>
+
+    <script>
+        const situations = [
+            {
+                id: 1,
+                icon: '📧',
+                from: 'Da: mario.rossi@azienda.com',
+                subject: 'Oggetto: Aggiornamento procedura sicurezza',
+                body: 'Buongiorno, ti informo che è stata aggiornata la procedura di backup. Trovi il documento sul portale interno nella sezione "Documenti Aziendali". Cordiali saluti, Mario Rossi - IT',
+                detail: 'Mittente: mario.rossi@azienda.com',
+                correct: 'safe',
+                feedback: {
+                    safe: '✅ Corretto! Email legittima da collega interno, nessun link sospetto, invita a consultare il portale ufficiale.',
+                    danger: '❌ Sbagliato! Questa è un\'email sicura: mittente verificato, nessun allegato o link esterno, rimanda al portale aziendale.'
+                }
+            },
+            {
+                id: 2,
+                icon: '⚠️',
+                from: 'Da: ceo@azlenda.com',
+                subject: 'Oggetto: URGENTE - Bonifico immediato',
+                body: 'Sono in riunione con un cliente importante. Ho bisogno che tu faccia un bonifico urgente di €15.000 su questo IBAN: IT60X0542811101000000123456. È fondamentale, conferma appena fatto.',
+                detail: 'Mittente: ceo@azlenda.com (nota: azlenda invece di azienda)',
+                correct: 'danger',
+                feedback: {
+                    danger: '✅ Corretto! Attacco di CEO fraud: il dominio è "azlenda.com" (con la L) invece di "azienda.com". Urgenza + richiesta denaro = red flag!',
+                    safe: '❌ Sbagliato! Guarda bene il mittente: "azlenda.com" invece di "azienda.com". È un classico attacco phishing con dominio simile!'
+                }
+            },
+            {
+                id: 3,
+                icon: '🔐',
+                from: 'Da: IT.support247@azienda.com',
+                subject: 'Oggetto: Manutenzione sistema - Verifica credenziali',
+                body: 'Il sistema IT richiede una verifica delle credenziali per la manutenzione programmata. Rispondi a questa email con username e password per evitare la sospensione dell\'account.',
+                detail: 'Mittente: IT.support247@azienda.com',
+                correct: 'danger',
+                feedback: {
+                    danger: '✅ Corretto! L\'IT aziendale NON chiede MAI password via email. Il numero "247" nel mittente è sospetto. Sempre contattare l\'IT direttamente.',
+                    safe: '❌ Sbagliato! Nessun reparto IT legittimo chiede password via email. Il numero nel mittente (247) è un indicatore di phishing.'
+                }
+            },
+            {
+                id: 4,
+                icon: '🏦',
+                from: 'Da: servizio.clienti@bancaintesa.support.com',
+                subject: 'Oggetto: Aggiornamento sicurezza conto',
+                body: 'Gentile cliente, per motivi di sicurezza è necessario aggiornare i dati del suo conto. Clicchi sul link seguente per procedere: https://bancaintesa.support.com/aggiorna',
+                detail: 'Dominio: bancaintesa.support.com (non il dominio ufficiale della banca)',
+                correct: 'danger',
+                feedback: {
+                    danger: '✅ Corretto! Il dominio "bancaintesa.support.com" NON è quello ufficiale della banca. Il dominio reale sarebbe "intesasanpaolo.com". Phishing bancario!',
+                    safe: '❌ Sbagliato! Controlla il dominio: "bancaintesa.support.com" è falso. Le banche usano sempre il loro dominio ufficiale, non sottodomini strani.'
+                }
+            },
+            {
+                id: 5,
+                icon: '📎',
+                from: 'Da: giulia.bianchi@azienda.com',
+                subject: 'Oggetto: Fattura fornitore',
+                body: 'Ciao, ti invio la fattura del fornitore come richiesto. Aprila e dimmi se va tutto bene. Grazie!',
+                detail: 'Allegato: Fattura_Dicembre_2024.pdf',
+                correct: 'safe',
+                feedback: {
+                    safe: '✅ Corretto! Email legittima: mittente aziendale verificato, allegato PDF (non .exe), contesto plausibile.',
+                    danger: '❌ Sbagliato! Questa email è sicura: collega reale, allegato PDF legittimo, nessun link o richiesta sospetta.'
+                }
+            },
+            {
+                id: 6,
+                icon: '💀',
+                from: 'Da: contabilita@azienda.com',
+                subject: 'Oggetto: Urgente - Documento importante',
+                body: 'Buonasera, allego documento urgente da firmare. Aprilo subito per favore.',
+                detail: 'Allegato: Documento_Urgente.pdf.exe | Orario invio: 03:47 AM',
+                correct: 'danger',
+                feedback: {
+                    danger: '✅ Corretto! Doppia estensione .pdf.exe = MALWARE! Inoltre email inviata alle 3:47 di notte da "contabilità" è altamente sospetta.',
+                    safe: '❌ Sbagliato! L\'allegato "Documento.pdf.exe" è un eseguibile mascherato! Le doppie estensioni sono un trucco classico dei malware.'
+                }
+            }
+        ];
+
+        let answeredCount = 0;
+        let correctCount = 0;
+        let answeredSituations = [];
+
+        function initGame() {
+            answeredCount = 0;
+            correctCount = 0;
+            answeredSituations = [];
+            updateStats();
+            renderSituations();
+            document.getElementById('victory').classList.remove('show');
+        }
+
+        function renderSituations() {
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = '';
+
+            situations.forEach(situation => {
+                const card = createSituationCard(situation);
+                gameArea.appendChild(card);
+            });
+        }
+
+        function createSituationCard(situation) {
+            const card = document.createElement('div');
+            card.className = 'situation-card';
+            card.id = `situation-${situation.id}`;
+
+            card.innerHTML = `
+                <div class="situation-header">
+                    <div class="situation-number">${situation.id}</div>
+                    <div class="situation-icon">${situation.icon}</div>
+                </div>
+
+                <div class="situation-content">
+                    <div class="email-from">${situation.from}</div>
+                    <div class="email-subject">${situation.subject}</div>
+                    <div class="email-body">${situation.body}</div>
+                    <div class="email-detail">${situation.detail}</div>
+                </div>
+
+                <div class="choices">
+                    <button class="choice-btn btn-safe" onclick="checkAnswer(${situation.id}, 'safe')">
+                        ✅ Sicura
+                    </button>
+                    <button class="choice-btn btn-danger" onclick="checkAnswer(${situation.id}, 'danger')">
+                        ❌ Pericolosa
+                    </button>
+                </div>
+
+                <div class="feedback" id="feedback-${situation.id}"></div>
+            `;
+
+            return card;
+        }
+
+        function checkAnswer(situationId, choice) {
+            if (answeredSituations.includes(situationId)) return;
+
+            const situation = situations.find(s => s.id === situationId);
+            const card = document.getElementById(`situation-${situationId}`);
+            const buttons = card.querySelectorAll('.choice-btn');
+            const feedback = document.getElementById(`feedback-${situationId}`);
+
+            answeredSituations.push(situationId);
+            answeredCount++;
+
+            const isCorrect = choice === situation.correct;
+            if (isCorrect) correctCount++;
+
+            // Disable buttons
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Highlight correct/wrong
+            buttons.forEach(btn => {
+                if (btn.classList.contains(`btn-${choice}`)) {
+                    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+                } else {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            // Show feedback
+            feedback.textContent = situation.feedback[choice];
+            feedback.className = `feedback ${isCorrect ? 'correct' : 'wrong'} show`;
+
+            card.classList.add('answered');
+
+            updateStats();
+
+            if (answeredCount === situations.length) {
+                setTimeout(showVictory, 1000);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('answered').textContent = answeredCount;
+            document.getElementById('correct').textContent = correctCount;
+        }
+
+        function showVictory() {
+            const victory = document.getElementById('victory');
+            document.getElementById('finalScore').textContent = correctCount;
+
+            let message = '';
+            if (correctCount === 6) {
+                message = '🏆 Perfetto! Sei un vero esperto di sicurezza informatica!';
+            } else if (correctCount >= 4) {
+                message = '👍 Ottimo lavoro! Continua a prestare attenzione ai dettagli.';
+            } else {
+                message = '📚 Rivedi i concetti e riprova. La formazione continua è fondamentale!';
+            }
+
+            document.getElementById('scoreMessage').textContent = message;
+            victory.classList.add('show');
+            victory.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function resetGame() {
+            initGame();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Start game
+        initGame();
+    </script>
+</body>
+</html>
