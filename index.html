@@ -17,20 +17,26 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    /* Centramento del contenuto */
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Centra orizzontalmente il viewport */
+    align-items: center; /* Centra verticalmente il viewport */
     margin: 0;
-    overflow: hidden; /* Importante per evitare barre di scorrimento */
+    overflow: hidden;
 }
 
-/* 2. NUOVO: Definisce l'area di visualizzazione Fissa (800 x 550) */
-#viewport-800x550 {
-    width: 800px; /* Larghezza target */
-    height: 550px; /* Altezza target */
-    overflow: hidden; /* Nasconde l'eventuale contenuto scalato che fuoriesce */
-    background-color: transparent; 
+/* 3. Container: Dimensione originale, SCALING e CENTRAMENTO */
+.container {
+    width: 900px; /* Larghezza originale di design */
+    height: 600px; /* Aumentato l'altezza per evitare tagli verticali, se necessario */
+    padding: 20px; 
+    margin: 0;
+    
+    /* MODIFICHE CRUCIALI PER SCALING E CENTRAMENTO */
+    /* Combina ridimensionamento (0.8889) e traslazione orizzontale (-50px) */
+    transform: scale(0.8889) translateX(-50px);
+    transform-origin: top left; 
+    
+    position: relative;
 }
 
 /* 3. MODIFICA: Il container ora definisce la dimensione ORIGINALE e applica lo SCALING */
