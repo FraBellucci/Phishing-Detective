@@ -6,316 +6,582 @@
     <title>Phishing Detective - Modulo 4</title>
     <style>
        /* Stili originali: Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+ * {
 
-/* 1. MODIFICA: Centra il contenuto e rimuove il padding fisso dal body */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center; /* Centra orizzontalmente il viewport */
-    align-items: center; /* Centra verticalmente il viewport */
-    margin: 0;
-    overflow: hidden;
-}
+            margin: 0;
 
-/* 3. Container: Dimensione originale, SCALING e CENTRAMENTO */
-.container {
-    width: 900px; /* Larghezza originale di design */
-    height: 600px; /* Aumentato l'altezza per evitare tagli verticali, se necessario */
-    padding: 20px; 
-    margin: 0;
-    
-    /* MODIFICHE CRUCIALI PER SCALING E CENTRAMENTO */
-    /* Combina ridimensionamento (0.8889) e traslazione orizzontale (-50px) */
-    transform: scale(0.8889) translateX(-50px);
-    transform-origin: top left; 
-    
-    position: relative;
-}
+            padding: 0;
 
-/* 3. MODIFICA: Il container ora definisce la dimensione ORIGINALE e applica lo SCALING */
-.container {
-    width: 900px; /* Larghezza originale di design */
-    margin: 0; /* Rimuove margin: 0 auto; non serve più */
-    padding: 20px; /* Sposta il padding qui, era sul body originale */
-    
-    /* TRASFORMAZIONE CHIAVE: Ridimensiona l'intero container */
-    transform: scale(0.8889); /* 800 / 900 = 0.8889 */
-    transform-origin: top left; /* Assicura che lo scaling avvenga dall'angolo */
-    position: relative;
-    /* L'altezza del container deve essere sufficiente per contenere tutto il gioco. */
-    /* Se si verifica un taglio verticale, aumentare l'altezza qui (es. height: 600px;) */
-}
+            box-sizing: border-box;
 
-/* Il resto degli stili del layout interno viene ridimensionato automaticamente */
+        }
 
-.header {
-    background: white;
-    border-radius: 15px;
-    padding: 20px 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
 
-h1 {
-    color: #667eea;
-    font-size: 2em;
-    margin-bottom: 8px;
-}
 
-.subtitle {
-    color: #666;
-    font-size: 1em;
-    margin-bottom: 15px;
-}
+        body {
 
-.stats {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    align-items: center;
-}
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-.stat-box {
-    background: #f0f4ff;
-    padding: 15px 25px;
-    border-radius: 10px;
-    font-weight: bold;
-    color: #667eea;
-}
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
-.reset-btn {
-    background: #667eea;
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 10px;
-    font-size: 1em;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s;
-}
+            min-height: 100vh;
 
-.reset-btn:hover {
-    background: #5568d3;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102,126,234,0.4);
-}
+            padding: 20px;
 
-.game-area {
-    margin-top: 20px;
-}
+        }
 
-.situation-card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    transition: all 0.3s;
-}
 
-.situation-card.answered {
-    opacity: 0.7;
-}
 
-.situation-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
-}
+        .container {
 
-.situation-icon {
-    font-size: 2.5em;
-}
+            max-width: 900px;
 
-.situation-number {
-    background: #667eea;
-    color: white;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
+            margin: 0 auto;
 
-.situation-content {
-    background: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    border-left: 4px solid #667eea;
-}
+        }
 
-.email-from {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 8px;
-}
 
-.email-subject {
-    color: #666;
-    font-style: italic;
-    margin-bottom: 12px;
-}
 
-.email-body {
-    color: #444;
-    line-height: 1.6;
-}
+        .header {
 
-.email-detail {
-    font-family: 'Courier New', monospace;
-    background: #e8e8e8;
-    padding: 8px;
-    border-radius: 5px;
-    margin-top: 10px;
-    font-size: 0.9em;
-}
+            background: white;
 
-.choices {
-    /* MODIFICA: Forza le scelte su una riga nel layout originale 900px
-       (se ci sono 3 o 4 scelte, potrebbero essere troppo larghe, altrimenti flex: 1 è OK) */
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap; 
-}
+            border-radius: 15px;
 
-.choice-btn {
-    flex: 1;
-    min-width: 150px;
-    padding: 15px 20px;
-    border: 3px solid transparent;
-    border-radius: 10px;
-    font-size: 1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
+            padding: 20px 25px;
 
-.choice-btn:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
+            margin-bottom: 20px;
 
-.choice-btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-}
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 
-.btn-safe {
-    background: #10b981;
-    color: white;
-}
+        }
 
-.btn-danger {
-    background: #ef4444;
-    color: white;
-}
 
-.btn-safe.correct {
-    border-color: #059669;
-    animation: pulse 0.5s;
-}
 
-.btn-danger.correct {
-    border-color: #dc2626;
-    animation: pulse 0.5s;
-}
+        h1 {
 
-.btn-safe.wrong, .btn-danger.wrong {
-    background: #6b7280;
-    border-color: #374151;
-}
+            color: #667eea;
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
+            font-size: 2em;
 
-.feedback {
-    margin-top: 15px;
-    padding: 15px;
-    border-radius: 10px;
-    font-weight: 500;
-    display: none;
-}
+            margin-bottom: 8px;
 
-.feedback.show {
-    display: block;
-    animation: slideDown 0.3s;
-}
+        }
 
-.feedback.correct {
-    background: #d1fae5;
-    color: #065f46;
-    border-left: 4px solid #10b981;
-}
 
-.feedback.wrong {
-    background: #fee2e2;
-    color: #991b1b;
-    border-left: 4px solid #ef4444;
-}
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        .subtitle {
 
-.victory {
-    background: white;
-    border-radius: 15px;
-    padding: 40px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    display: none;
-}
+            color: #666;
 
-.victory.show {
-    display: block;
-    animation: slideDown 0.5s;
-}
+            font-size: 1em;
 
-.victory h2 {
-    color: #10b981;
-    font-size: 2.5em;
-    margin-bottom: 15px;
-}
+            margin-bottom: 15px;
 
-.victory-emoji {
-    font-size: 4em;
-    margin-bottom: 20px;
-}
+        }
 
-.score-details {
-    background: #f0f4ff;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px 0;
-}
 
-/* 4. RIMOZIONE: La media query non è più necessaria con lo scaling forzato */
-/* @media (max-width: 768px) { ... } */
+
+        .stats {
+
+            display: flex;
+
+            gap: 20px;
+
+            flex-wrap: wrap;
+
+            align-items: center;
+
+        }
+
+
+
+        .stat-box {
+
+            background: #f0f4ff;
+
+            padding: 15px 25px;
+
+            border-radius: 10px;
+
+            font-weight: bold;
+
+            color: #667eea;
+
+        }
+
+
+
+        .reset-btn {
+
+            background: #667eea;
+
+            color: white;
+
+            border: none;
+
+            padding: 12px 30px;
+
+            border-radius: 10px;
+
+            font-size: 1em;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            transition: all 0.3s;
+
+        }
+
+
+
+        .reset-btn:hover {
+
+            background: #5568d3;
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+
+        }
+
+
+
+        .game-area {
+
+            margin-top: 20px;
+
+        }
+
+
+
+        .situation-card {
+
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 25px;
+
+            margin-bottom: 20px;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+
+            transition: all 0.3s;
+
+        }
+
+
+
+        .situation-card.answered {
+
+            opacity: 0.7;
+
+        }
+
+
+
+        .situation-header {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 15px;
+
+        }
+
+
+
+        .situation-icon {
+
+            font-size: 2.5em;
+
+        }
+
+
+
+        .situation-number {
+
+            background: #667eea;
+
+            color: white;
+
+            width: 35px;
+
+            height: 35px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .situation-content {
+
+            background: #f9f9f9;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            border-left: 4px solid #667eea;
+
+        }
+
+
+
+        .email-from {
+
+            font-weight: bold;
+
+            color: #333;
+
+            margin-bottom: 8px;
+
+        }
+
+
+
+        .email-subject {
+
+            color: #666;
+
+            font-style: italic;
+
+            margin-bottom: 12px;
+
+        }
+
+
+
+        .email-body {
+
+            color: #444;
+
+            line-height: 1.6;
+
+        }
+
+
+
+        .email-detail {
+
+            font-family: 'Courier New', monospace;
+
+            background: #e8e8e8;
+
+            padding: 8px;
+
+            border-radius: 5px;
+
+            margin-top: 10px;
+
+            font-size: 0.9em;
+
+        }
+
+
+
+        .choices {
+
+            display: flex;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+
+        }
+
+
+
+        .choice-btn {
+
+            flex: 1;
+
+            min-width: 150px;
+
+            padding: 15px 20px;
+
+            border: 3px solid transparent;
+
+            border-radius: 10px;
+
+            font-size: 1em;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: all 0.3s;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+        }
+
+
+
+        .choice-btn:hover:not(:disabled) {
+
+            transform: translateY(-3px);
+
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+
+        }
+
+
+
+        .choice-btn:disabled {
+
+            cursor: not-allowed;
+
+            opacity: 0.6;
+
+        }
+
+
+
+        .btn-safe {
+
+            background: #10b981;
+
+            color: white;
+
+        }
+
+
+
+        .btn-danger {
+
+            background: #ef4444;
+
+            color: white;
+
+        }
+
+
+
+        .btn-safe.correct {
+
+            border-color: #059669;
+
+            animation: pulse 0.5s;
+
+        }
+
+
+
+        .btn-danger.correct {
+
+            border-color: #dc2626;
+
+            animation: pulse 0.5s;
+
+        }
+
+
+
+        .btn-safe.wrong, .btn-danger.wrong {
+
+            background: #6b7280;
+
+            border-color: #374151;
+
+        }
+
+
+
+        @keyframes pulse {
+
+            0%, 100% { transform: scale(1); }
+
+            50% { transform: scale(1.05); }
+
+        }
+
+
+
+        .feedback {
+
+            margin-top: 15px;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            font-weight: 500;
+
+            display: none;
+
+        }
+
+
+
+        .feedback.show {
+
+            display: block;
+
+            animation: slideDown 0.3s;
+
+        }
+
+
+
+        .feedback.correct {
+
+            background: #d1fae5;
+
+            color: #065f46;
+
+            border-left: 4px solid #10b981;
+
+        }
+
+
+
+        .feedback.wrong {
+
+            background: #fee2e2;
+
+            color: #991b1b;
+
+            border-left: 4px solid #ef4444;
+
+        }
+
+
+
+        @keyframes slideDown {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateY(-10px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform: translateY(0);
+
+            }
+
+        }
+
+
+
+        .victory {
+
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 40px;
+
+            text-align: center;
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+            display: none;
+
+        }
+
+
+
+        .victory.show {
+
+            display: block;
+
+            animation: slideDown 0.5s;
+
+        }
+
+
+
+        .victory h2 {
+
+            color: #10b981;
+
+            font-size: 2.5em;
+
+            margin-bottom: 15px;
+
+        }
+
+
+
+        .victory-emoji {
+
+            font-size: 4em;
+
+            margin-bottom: 20px;
+
+        }
+
+
+
+        .score-details {
+
+            background: #f0f4ff;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            margin: 20px 0;
+
+        }
+
+
+
+        @media (max-width: 768px) {
+
+            h1 {
+
+                font-size: 1.6em;
+
+            }
+
+
+
+            .choices {
+
+                flex-direction: column;
+
+            }
+
+
+
+            .choice-btn {
+
+                min-width: 100%;
+
+            }
+
+        }
+
     </style>
 </head>
 <body>
