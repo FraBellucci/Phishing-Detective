@@ -5,298 +5,318 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phishing Detective - Modulo 4</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+       /* Stili originali: Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+/* 1. MODIFICA: Centra il contenuto e rimuove il padding fisso dal body */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    /* Centramento del contenuto */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    overflow: hidden; /* Importante per evitare barre di scorrimento */
+}
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+/* 2. NUOVO: Definisce l'area di visualizzazione Fissa (800 x 550) */
+#viewport-800x550 {
+    width: 800px; /* Larghezza target */
+    height: 550px; /* Altezza target */
+    overflow: hidden; /* Nasconde l'eventuale contenuto scalato che fuoriesce */
+    background-color: transparent; 
+}
 
-        .header {
-            background: white;
-            border-radius: 15px;
-            padding: 20px 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
+/* 3. MODIFICA: Il container ora definisce la dimensione ORIGINALE e applica lo SCALING */
+.container {
+    width: 900px; /* Larghezza originale di design */
+    margin: 0; /* Rimuove margin: 0 auto; non serve più */
+    padding: 20px; /* Sposta il padding qui, era sul body originale */
+    
+    /* TRASFORMAZIONE CHIAVE: Ridimensiona l'intero container */
+    transform: scale(0.8889); /* 800 / 900 = 0.8889 */
+    transform-origin: top left; /* Assicura che lo scaling avvenga dall'angolo */
+    position: relative;
+    /* L'altezza del container deve essere sufficiente per contenere tutto il gioco. */
+    /* Se si verifica un taglio verticale, aumentare l'altezza qui (es. height: 600px;) */
+}
 
-        h1 {
-            color: #667eea;
-            font-size: 2em;
-            margin-bottom: 8px;
-        }
+/* Il resto degli stili del layout interno viene ridimensionato automaticamente */
 
-        .subtitle {
-            color: #666;
-            font-size: 1em;
-            margin-bottom: 15px;
-        }
+.header {
+    background: white;
+    border-radius: 15px;
+    padding: 20px 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
 
-        .stats {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
+h1 {
+    color: #667eea;
+    font-size: 2em;
+    margin-bottom: 8px;
+}
 
-        .stat-box {
-            background: #f0f4ff;
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-weight: bold;
-            color: #667eea;
-        }
+.subtitle {
+    color: #666;
+    font-size: 1em;
+    margin-bottom: 15px;
+}
 
-        .reset-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 10px;
-            font-size: 1em;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
+.stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
 
-        .reset-btn:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
-        }
+.stat-box {
+    background: #f0f4ff;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #667eea;
+}
 
-        .game-area {
-            margin-top: 20px;
-        }
+.reset-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+}
 
-        .situation-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-        }
+.reset-btn:hover {
+    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+}
 
-        .situation-card.answered {
-            opacity: 0.7;
-        }
+.game-area {
+    margin-top: 20px;
+}
 
-        .situation-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
+.situation-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+}
 
-        .situation-icon {
-            font-size: 2.5em;
-        }
+.situation-card.answered {
+    opacity: 0.7;
+}
 
-        .situation-number {
-            background: #667eea;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+.situation-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
 
-        .situation-content {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
-        }
+.situation-icon {
+    font-size: 2.5em;
+}
 
-        .email-from {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 8px;
-        }
+.situation-number {
+    background: #667eea;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
 
-        .email-subject {
-            color: #666;
-            font-style: italic;
-            margin-bottom: 12px;
-        }
+.situation-content {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
 
-        .email-body {
-            color: #444;
-            line-height: 1.6;
-        }
+.email-from {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+}
 
-        .email-detail {
-            font-family: 'Courier New', monospace;
-            background: #e8e8e8;
-            padding: 8px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 0.9em;
-        }
+.email-subject {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 12px;
+}
 
-        .choices {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
+.email-body {
+    color: #444;
+    line-height: 1.6;
+}
 
-        .choice-btn {
-            flex: 1;
-            min-width: 150px;
-            padding: 15px 20px;
-            border: 3px solid transparent;
-            border-radius: 10px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+.email-detail {
+    font-family: 'Courier New', monospace;
+    background: #e8e8e8;
+    padding: 8px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
 
-        .choice-btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
+.choices {
+    /* MODIFICA: Forza le scelte su una riga nel layout originale 900px
+       (se ci sono 3 o 4 scelte, potrebbero essere troppo larghe, altrimenti flex: 1 è OK) */
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap; 
+}
 
-        .choice-btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
+.choice-btn {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px 20px;
+    border: 3px solid transparent;
+    border-radius: 10px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
 
-        .btn-safe {
-            background: #10b981;
-            color: white;
-        }
+.choice-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
 
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
+.choice-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
 
-        .btn-safe.correct {
-            border-color: #059669;
-            animation: pulse 0.5s;
-        }
+.btn-safe {
+    background: #10b981;
+    color: white;
+}
 
-        .btn-danger.correct {
-            border-color: #dc2626;
-            animation: pulse 0.5s;
-        }
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
 
-        .btn-safe.wrong, .btn-danger.wrong {
-            background: #6b7280;
-            border-color: #374151;
-        }
+.btn-safe.correct {
+    border-color: #059669;
+    animation: pulse 0.5s;
+}
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+.btn-danger.correct {
+    border-color: #dc2626;
+    animation: pulse 0.5s;
+}
 
-        .feedback {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: 500;
-            display: none;
-        }
+.btn-safe.wrong, .btn-danger.wrong {
+    background: #6b7280;
+    border-color: #374151;
+}
 
-        .feedback.show {
-            display: block;
-            animation: slideDown 0.3s;
-        }
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
 
-        .feedback.correct {
-            background: #d1fae5;
-            color: #065f46;
-            border-left: 4px solid #10b981;
-        }
+.feedback {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: 500;
+    display: none;
+}
 
-        .feedback.wrong {
-            background: #fee2e2;
-            color: #991b1b;
-            border-left: 4px solid #ef4444;
-        }
+.feedback.show {
+    display: block;
+    animation: slideDown 0.3s;
+}
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.feedback.correct {
+    background: #d1fae5;
+    color: #065f46;
+    border-left: 4px solid #10b981;
+}
 
-        .victory {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: none;
-        }
+.feedback.wrong {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+}
 
-        .victory.show {
-            display: block;
-            animation: slideDown 0.5s;
-        }
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        .victory h2 {
-            color: #10b981;
-            font-size: 2.5em;
-            margin-bottom: 15px;
-        }
+.victory {
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: none;
+}
 
-        .victory-emoji {
-            font-size: 4em;
-            margin-bottom: 20px;
-        }
+.victory.show {
+    display: block;
+    animation: slideDown 0.5s;
+}
 
-        .score-details {
-            background: #f0f4ff;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
+.victory h2 {
+    color: #10b981;
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
 
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.6em;
-            }
+.victory-emoji {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
 
-            .choices {
-                flex-direction: column;
-            }
+.score-details {
+    background: #f0f4ff;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
 
-            .choice-btn {
-                min-width: 100%;
-            }
-        }
+/* 4. RIMOZIONE: La media query non è più necessaria con lo scaling forzato */
+/* @media (max-width: 768px) { ... } */
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="viewport-800x550">
+        <div class="container">
+            </div>
+    </div>
         <div class="header">
             <h1>🕵️ Phishing Detective</h1>
             <p class="subtitle">Riconosci le minacce informatiche e proteggi l'azienda!</p>
